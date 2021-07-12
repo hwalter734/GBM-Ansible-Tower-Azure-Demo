@@ -52,4 +52,4 @@ En nuestra demo establecemos que media vez haya uso de 50% o más del CPU promed
 # Recomendaciones Finales
 Ansible puede tener problemas de versionamiento con los módulos de Azure dependiendo de su versión de python. En el archivo de **inventory**, puede eliminar la variable de ansible python interpreter o reemplazarla con su interpretador de python preferido. De igual manera puede establecer esta variable en la sección de inventarios y hosts en Ansible Tower.
 ## Aplicación de Prueba 
-La aplicación que se utiliza en los archivos es una aplicación Java. Se empaqueta con Maven y finalmente se ejecuta con el comando *java -jar*. Si usted desea utilizar otra aplicación, puede modificar los archivos para que se ejecute correctamente.
+La aplicación que se utiliza en los archivos es una aplicación Java. Se empaqueta con Maven y finalmente se ejecuta con el comando `java -jar`. Si usted desea utilizar otra aplicación, puede modificar los archivos para que se ejecute correctamente.
