@@ -1,0 +1,51 @@
+---
+- name: Actualizar instancias del VMSS
+  hosts: localhost
+  tasks:
+    - name: Incluyendo archivos de variables...
+      include_vars:
+        file: variables.yml
+
+    - name: Esperar para actualización de ambiente...
+      pause:
+        minutes: 3
+
+- name: Obteniendo información del VMSS...
+  import_playbook: get_hosts_tasks.yml
+
+- name: Instalar la aplicación web
+  hosts: "{{ personal_host_group }}[2:]"
+  become: yes
+  tasks:
+    - name: Instalando JRE, JDK y maven...
+      apt:
+        name: ['maven', 'default-jre', 'default-jdk']
+        update_cache: yes
+
+    - name: Creando directorio para aplicación...
+      file:
+        path: "{{ workspace }}"
+        state: directory
+        mode: '755'
+        
+    - name: Clonando el repositorio GIT...
+      git:
+        repo: https://github.com/ishaileshmishra/spring-boot-web-app.git 
+        dest: "{{ workspace }}"
+
+    - name: Empaquetando la aplicación...
+      shell: mvn package chdir="{{ workspace }}/"
+
+    - name: Renombrando aplicación...
+      copy:
+        remote_src: yes
+        src: "{{ workspace }}/target/news-0.0.1.jar"
+        dest: "sample.jar"
+        force: yes
+        mode: 0755
+  
+    - name: Ejecutando la aplicación...
+      shell: java -jar "sample.jar" >/dev/null 2>&1 &
+      async: 5000
+      poll: 0
+...

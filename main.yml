@@ -1,0 +1,94 @@
+---
+- name: Creación de grupo de recursos, virtual network y el loadbalancer
+  hosts: localhost
+  tasks:
+    - name: Creando el grupo de recursos...
+      azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ location }}"
+
+    - name: Haciendo revisiones previas de dirección ip...
+      block:
+        - name: Obteniendo dirección ip del usuario...
+          set_fact:
+            ip_var: "{{ vn_address_var | ipaddr }}"
+            ip_var_subnet: "{{ subnet_address_var | ipaddr }}"
+
+        - name: Revisando la dirección ip es válida...
+          fail:
+            msg: La dirección ip proporcionada de la virtual network no es válida, por favor ingrese otra
+          when: ip_var == false
+
+        - name: Revisando la dirección ip del subnet es válida...
+          fail:
+            msg: La dirección ip proporcionada de la subnet no es válida, por favor ingrese otra
+          when: ip_var_subnet == false
+
+    - name: Creando el virtual network...
+      azure_rm_virtualnetwork:
+        name: "{{ vmss_name_network }}"
+        resource_group: "{{ resource_group }}"
+        address_prefixes: "{{ ip_var }}"
+    
+    - name: Creando el virtual subnet...
+      azure_rm_subnet:
+        name: "{{ vmss_name_subnet }}"
+        resource_group: "{{ resource_group }}"
+        address_prefix_cidr: "{{ ip_var_subnet }}"
+        virtual_network: "{{ vmss_name_network }}"
+
+    - name: Creando una dirección IP pública...
+      azure_rm_publicipaddress:
+        name: "{{ vmss_name }}"
+        resource_group: "{{ resource_group }}"
+        allocation_method: Static
+
+    - name: Creando el grupo de seguridad para habilitar acceso por medio de SSH...
+      azure_rm_securitygroup:
+        name: "{{ vmss_name }}"
+        resource_group: "{{ resource_group }}"
+        rules:
+          - name: SSH
+            protocol: Tcp
+            destination_port_range: 22
+            access: Allow
+            priority: 1001
+            direction: Inbound
+
+    - name: Creando el load balancer...
+      azure_rm_loadbalancer:
+        resource_group: "{{ resource_group }}"
+        name: "{{ vmss_name_lb }}"
+        location: "{{ location }}"
+        frontend_ip_configurations:
+          - name: "{{ vmss_name }}front-config"
+            public_ip_address: "{{ vmss_name }}"
+        backend_address_pools:
+          - name: "{{ vmss_name }}backend-pool"
+        probes:
+          - name: "{{ vmss_name }}prob0"
+            port: 8080
+            interval: 10
+            fail_count: 3
+        inbound_nat_pools:
+          - name: "{{ vmss_name }}nat-pool"
+            frontend_ip_configuration_name: "{{ vmss_name }}front-config"
+            protocol: Tcp
+            frontend_port_range_start: 50000
+            frontend_port_range_end: 50040
+            backend_port: 22
+        load_balancing_rules:
+          - name: "{{ vmss_name }}lbs-rules"
+            frontend_ip_configuration: "{{ vmss_name }}front-config"
+            backend_address_pool: "{{ vmss_name }}backend-pool"
+            frontend_port: 80
+            backend_port: 8080
+            load_distribution: Default
+            probe: "{{ vmss_name }}prob0"
+
+- name: Creando el vm scale set...
+  import_playbook: vmss_playbook.yml
+
+- name: Creando el auto scale con las condiciones brindadas...
+  import_playbook: autoscale_playbook.yml
+...

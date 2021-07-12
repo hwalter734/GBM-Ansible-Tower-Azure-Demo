@@ -1,0 +1,23 @@
+---
+- name: Incluyendo variables
+  hosts: localhost
+  tasks:
+    - name: Incluyendo archivo de variables...
+      include_vars:
+        file: variables.yml
+
+- name: Include a play after another play
+  import_playbook: get_hosts_tasks.yml
+
+- name: Realizando pruebas de cpu stress...
+  hosts: "{{ personal_host_group }}"
+  become: yes
+  tasks:
+    - name: Revisando existencia de paquete stress...
+      package:
+        name: stress
+        state: present
+
+    - name: Stress CPU over 50%
+      shell: stress --cpu 1 --timeout 20m
+...

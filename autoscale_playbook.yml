@@ -1,0 +1,52 @@
+---
+- hosts: localhost
+  tasks:
+  - name: Obteniendo información del grupo de recursos...
+    azure_rm_resourcegroup_info:
+      name: "{{ resource_group }}"
+    register: rg
+
+  - name: Obteniendo URI del virtual machine scale set...
+    set_fact:
+      vmss_id: "{{ rg.resourcegroups[0].id }}/providers/Microsoft.Compute/virtualMachineScaleSets/{{ vmss_name }}"
+
+  - name: Creando reglas y perfiles de autoscale...
+    azure_rm_autoscale:
+      resource_group: "{{ resource_group }}"
+      name: "{{ autoscale_name }}"
+      target: "{{ vmss_id }}"
+      enabled: true
+      profiles:
+      - count: '2'
+        max_count: '5'
+        min_count: '2'
+        name: 'This scale condition is executed when none of the other scale condition(s) match'
+        fixed_date_start: "2021-06-03T00:00:00"
+        fixed_date_end: "2023-06-30T00:00:00" 
+        recurrence_timezone: Pacific Standard Time
+        rules:
+          - cooldown: 1
+            direction: Increase
+            metric_name: Percentage CPU
+            metric_resource_uri: "{{ vmss_id }}"
+            operator: GreaterThanOrEqual
+            statistic: Average
+            threshold: "{{ threshold_var }}"
+            time_aggregation: Average
+            time_grain: 1
+            time_window: 5
+            type: ChangeCount
+            value: '1'
+          - cooldown: 1
+            direction: Decrease
+            metric_name: Percentage CPU
+            metric_resource_uri: "{{ vmss_id }}"
+            operator: LessThan
+            statistic: Average
+            threshold: "{{ threshold_var }}"
+            time_aggregation: Average
+            time_grain: 1
+            time_window: 5
+            type: ChangeCount
+            value: '1'
+...
