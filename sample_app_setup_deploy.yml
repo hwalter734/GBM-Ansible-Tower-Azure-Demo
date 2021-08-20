@@ -3,7 +3,7 @@
   import_playbook: get_hosts_tasks.yml
 
 - name: Instalar la aplicación web
-  hosts: mygroup
+  hosts: "{{ personal_host_group }}"
   become: yes
   tasks:
     - name: Instalando JRE, JDK y maven...
@@ -16,10 +16,10 @@
         path: "{{ workspace }}"
         state: directory
         mode: '755'
-        
+
     - name: Clonando el repositorio GIT...
       git:
-        repo: https://github.com/ishaileshmishra/spring-boot-web-app.git 
+        repo: https://github.com/ishaileshmishra/spring-boot-web-app.git
         dest: "{{ workspace }}"
 
     - name: Empaquetando la aplicación...
@@ -32,7 +32,7 @@
         dest: "sample.jar"
         force: yes
         mode: 0755
-  
+
     - name: Ejecutando la aplicación...
       shell: java -jar "sample.jar" >/dev/null 2>&1 &
       async: 5000
