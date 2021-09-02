@@ -2,7 +2,7 @@
 # Contenido
 El propósito del repositorio es poder demostrar la capacidad de integrar aplicaciones web utilizando la plataforma de Ansible Tower y Microsoft Azure. En este ejemplo, se estará creando un grupo de máquinas virtuales escalables. 
 # Requisitos
-- **Ansible**: Debe tener instalado Ansible en su nodo de control. Independientemente del sistema operativo que utilice, haga uso del manejador de paquetes predeterminado de su máquina (apt|yum|etc). Más información sobre la instalación y requirimientos de Ansible haga click [aquí](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
+- **Ansible**: Debe tener instalado Ansible en su nodo de control. Independientemente del sistema operativo que utilice, haga uso del manejador de paquetes predeterminado de su máquina (apt|yum|etc). Más información sobre la instalación y requerimientos de Ansible haga click [aquí](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
 - **Ansible Tower**: Debe tener instalado Ansible Tower en su nodo de control. Más información sobre la instalación de Ansible Tower haga click [aquí](https://docs.ansible.com/ansible-tower/2.2.2/html/quickinstall/index.html).
 - **Licencia Ansible Tower**: Debe de adquirir una membresía de Ansible Tower para poder utilizar la plataforma, consulte la siguiente [página](https://www.redhat.com/en/technologies/management/ansible/try-it) o contacte a su supervisor para adquirir una membresía.
 - **Cuenta Microsoft Azure**: Puede obtener una prueba de 1 mes y $200 de crédito al crear una cuenta nueva en Microsoft Azure. De esta manera puede realizar la demo de este repositorio. Puede ingresar al siguiente [link](https://azure.microsoft.com/en-us/free/) para crear su cuenta.
