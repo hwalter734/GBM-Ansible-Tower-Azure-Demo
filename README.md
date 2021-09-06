@@ -10,9 +10,17 @@ El propósito del repositorio es poder demostrar la capacidad de integrar aplica
 No utilicé otro método de internet ya que puede ocasionar conflicto de dependencias en su máquina. Tampoco debe instalar los módulos de Azure por medio de Ansible Galaxy ya que este también le ocasionará problemas. Utilice el siguiente comando para instalar las librerías y módulos necesarios para poder utilizar Ansible con Azure.
 `pip install 'ansible[azure]'`
 ## Autenticación cuenta Microsoft Azure
-Para poder autenticar su usuario de Microsoft Azure con Ansible, utilice el siguiente comando `az login`. Dependiendo si lo está haciendo en su máquina local o una remota, el método de log in puede ser interactivo por medio de una página web o bien le proporcione un código que debe ingresar en el link que le aparezca en pantalla.
+Para poder autenticar su usuario de Microsoft Azure con Ansible, utilice el siguiente comando:
+```
+az login
+```
+Dependiendo si lo está haciendo en su máquina local o una remota, el método de log in puede ser interactivo por medio de una página web o bien le proporcione un código que debe ingresar en el link que le aparezca en pantalla.
 ## Ambiente Ansible Tower
-Ansible Tower necesita de sus credenciales para poder ejecutar los playbooks. En la parte de *Credentials*, debe crear una nueva credencial de tipo *Microsoft Azure Resource Manager*. Debe ingresar su username como también contraseña. Para obtener su *Subscription ID* y *Tenant ID* puede correr el siguiente comando en la terminal `az account list`. El ID es su *Subscription ID* y su Tenant ID corresponde con *Tenant ID*. Los demás campos los puede dejar vacíos.
+Ansible Tower necesita de sus credenciales para poder ejecutar los playbooks. En la parte de *Credentials*, debe crear una nueva credencial de tipo *Microsoft Azure Resource Manager*. Debe ingresar su username como también contraseña. Para obtener su *Subscription ID* y *Tenant ID* puede correr el siguiente comando en la terminal:
+```
+az account list
+```
+El ID es su *Subscription ID* y su Tenant ID corresponde con *Tenant ID*. Los demás campos los puede dejar vacíos.
 ![azureinfocredentials](screenshots/azurecredentials.png?raw=true)
 
 **NOTA IMPORTANTE** Si en la ejecución de los playbooks le sale un error de autenticación, su cuenta puede tener problemas de autenticación con Azure. Como alternativa, puede utilizar Azure Active Directory para crear un nuevo usuario, proporcionarle todos los permisos a sus recursos y utilizar esta cuenta con Ansible Tower. Más información [aquí](https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/add-users-azure-active-directory).  
@@ -52,4 +60,8 @@ En nuestra demo establecemos que media vez haya uso de 50% o más del CPU promed
 # Recomendaciones Finales
 Ansible puede tener problemas de versionamiento con los módulos de Azure dependiendo de su versión de python. En el archivo de **inventory**, puede eliminar la variable de ansible python interpreter o reemplazarla con su interpretador de python preferido. De igual manera puede establecer esta variable en la sección de inventarios y hosts en Ansible Tower.
 ## Aplicación de Prueba 
-La aplicación que se utiliza en los archivos es una aplicación Java. Se empaqueta con Maven y finalmente se ejecuta con el siguiente comando: `java -jar`. Si usted desea utilizar otra aplicación, puede modificar los archivos para que se ejecute correctamente.
+La aplicación que se utiliza en los archivos es una aplicación Java. Se empaqueta con Maven y finalmente se ejecuta con el siguiente comando:
+```
+java -jar
+```
+Si usted desea utilizar otra aplicación, puede modificar los archivos para que se ejecute correctamente.
